@@ -10,7 +10,8 @@ from aiogram.enums import ParseMode
 
 from config import *
 import messages as msg
-
+import os
+from aiohttp import web
 
 # ============================================================
 # БАЗА ДАННЫХ (простой JSON)
@@ -256,8 +257,28 @@ async def send_daily():
         await asyncio.sleep(30)
 
 
+# ============================================================
+# ФЕЙКОВЫЙ ВЕБ-СЕРВЕР (для Render Web Service)
+# ============================================================
+async def healthcheck(request):
+    return web.Response(text="Bot is alive ❤️")
+
+
+async def start_webserver():
+    app = web.Application()
+    app.router.add_get("/", healthcheck)
+    app.router.add_get("/health", healthcheck)
+    port = int(os.environ.get("PORT", 10000))
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+    print(f"✅ Веб-сервер на порту {port}")
+
+
 async def main():
-    # запускаем рассылку параллельно
+    # запускаем веб-сервер и рассылку параллельно
+    asyncio.create_task(start_webserver())
     asyncio.create_task(send_daily())
     print("🚀 Бот запущен!")
     await dp.start_polling(bot)
