@@ -1,3 +1,5 @@
+import os
+
 # ============================================================
 # НАСТРОЙКИ БОТА
 # ============================================================
@@ -22,6 +24,6 @@ MORNING_TIME = "09:00"
 DAY_COMPLIMENT_TIME = "12:00"
 NIGHT_TIME = "22:00"
 
-# 📁 Файл базы данных
+# 📁 Путь к БД
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_FILE = os.path.join(BASE_DIR, "data.json")
